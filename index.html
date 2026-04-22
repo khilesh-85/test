@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Git Backup Tool</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-align: center;
+        }
+
+        .container {
+            margin-top: 80px;
+        }
+
+        .card {
+            background: white;
+            color: black;
+            padding: 30px;
+            border-radius: 15px;
+            width: 300px;
+            margin: auto;
+            box-shadow: 0px 10px 20px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            display: block;
+            margin: 15px 0;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #5a67d8;
+        }
+
+        input {
+            padding: 8px;
+            width: 90%;
+            margin-top: 10px;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            background: #764ba2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>🚀 Git Backup Dashboard</h1>
+
+    <div class="card">
+        <a href="/backup" class="btn">🔄 Backup Now</a>
+        <a href="/history" class="btn">📜 View History</a>
+
+        <h3>Restore</h3>
+        <form action="/restore" method="post">
+            <input type="text" name="commit" placeholder="Enter commit ID">
+            <button type="submit">Restore</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
