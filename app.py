@@ -3,33 +3,37 @@ import subprocess
 import threading
 import time
 from datetime import datetime
+import os
 
 app = Flask(__name__)
 
-# 🔥 CHANGE THIS PATH (IMPORTANT)
-REPO_PATH = "/Users/khushaggarwal/Documents/test"
+# Automatically use the folder where app.py exists
+REPO_PATH = os.path.dirname(os.path.abspath(__file__))
 
 # ------------------ RUN GIT COMMAND ------------------
 def run_git(cmd):
-    return subprocess.getoutput(f"cd {REPO_PATH} && {cmd}")
+    return subprocess.getoutput(f'git -C "{REPO_PATH}" {cmd}')
 
 
 # ------------------ AUTO BACKUP ------------------
 def auto_backup():
     while True:
-        output = run_git("git status --porcelain")
+        output = run_git("status --porcelain")
 
         if output.strip() != "":
             print("Auto backup running...")
 
-            run_git("git add .")
+            run_git("add .")
 
-            msg = f"Auto backup: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
-            run_git(f'git commit -m "{msg}"')
+            msg = f'Auto backup: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}'
+            commit_output = run_git(f'commit -m "{msg}"')
+            print(commit_output)
 
-            run_git("git push origin main")
+            # Optional: push to GitHub too
+            push_output = run_git("push origin main")
+            print(push_output)
 
-        time.sleep(60)  # every 1 minute
+        time.sleep(10)   # check every 10 seconds
 
 
 # ------------------ HOME PAGE ------------------
@@ -41,16 +45,22 @@ def home():
 # ------------------ MANUAL BACKUP ------------------
 @app.route("/backup")
 def backup():
-    run_git("git add .")
-    run_git('git commit -m "Manual backup from web"')
-    run_git("git push origin main")
-    return "✅ Backup Done <br><a href='/'>⬅ Back</a>"
+    run_git("add .")
+    commit_output = run_git('commit -m "Manual backup from web"')
+    push_output = run_git("push origin main")
+
+    return f"""
+    <h3>✅ Backup Done</h3>
+    <pre>{commit_output}
+{push_output}</pre>
+    <a href="/">⬅ Back</a>
+    """
 
 
 # ------------------ HISTORY DASHBOARD ------------------
 @app.route("/history")
 def history():
-    log = run_git("git log --oneline")
+    log = run_git("log --oneline")
 
     return f"""
     <html>
@@ -75,6 +85,7 @@ def history():
                 background: #eee;
                 padding: 10px;
                 border-radius: 5px;
+                white-space: pre-wrap;
             }}
             a {{
                 display: inline-block;
@@ -88,13 +99,11 @@ def history():
         </style>
     </head>
     <body>
-
         <div class="box">
             <h2>📊 Backup History</h2>
             <pre>{log}</pre>
             <a href="/">⬅ Back to Dashboard</a>
         </div>
-
     </body>
     </html>
     """
@@ -103,20 +112,21 @@ def history():
 # ------------------ RESTORE ------------------
 @app.route("/restore", methods=["POST"])
 def restore():
-    commit = request.form.get("commit")
+    commit = request.form.get("commit", "").strip()
 
-    run_git(f"git checkout {commit}")
+    if not commit:
+        return "<h3>❌ Please enter a commit ID</h3><a href='/'>⬅ Back</a>"
+
+    output = run_git(f"reset --hard {commit}")
 
     return f"""
     <h3>✅ Restored to {commit}</h3>
+    <pre>{output}</pre>
     <a href="/">⬅ Back</a>
     """
 
 
-# ------------------ START AUTO BACKUP THREAD ------------------
-threading.Thread(target=auto_backup, daemon=True).start()
-
-
 # ------------------ RUN APP ------------------
 if __name__ == "__main__":
-    app.run(debug=True)
+    threading.Thread(target=auto_backup, daemon=True).start()
+    app.run(debug=True, use_reloader=False)
