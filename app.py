@@ -29,11 +29,19 @@ def auto_backup():
             commit_output = run_git(f'commit -m "{msg}"')
             print(commit_output)
 
+<<<<<<< HEAD
             # Optional: push to GitHub too
             push_output = run_git("push origin main")
             print(push_output)
 
         time.sleep(10)   # check every 10 seconds
+=======
+            # push only if you want GitHub update too
+            push_output = run_git("push origin main")
+            print(push_output)
+
+        time.sleep(60)
+>>>>>>> 0b9e6b72b55024de1a56761bb7e6d44d1ae1e719
 
 
 # ------------------ HOME PAGE ------------------
@@ -126,7 +134,11 @@ def restore():
     """
 
 
+<<<<<<< HEAD
 # ------------------ RUN APP ------------------
+=======
+# ------------------ START AUTO BACKUP THREAD ------------------
+>>>>>>> 0b9e6b72b55024de1a56761bb7e6d44d1ae1e719
 if __name__ == "__main__":
     threading.Thread(target=auto_backup, daemon=True).start()
     app.run(debug=True, use_reloader=False)

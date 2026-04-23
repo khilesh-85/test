@@ -1,5 +1,6 @@
 kkhlo this side khush
 
+<<<<<<< HEAD
 hello world
 
 add new text git backup 
@@ -15,3 +16,11 @@ nvvkngbkgnb
 
 1231645131evetbrb
 vrtb
+=======
+hi thhile is github backup demo
+
+auto backup
+
+
+this is backup kk1234 
+>>>>>>> 0b9e6b72b55024de1a56761bb7e6d44d1ae1e719
